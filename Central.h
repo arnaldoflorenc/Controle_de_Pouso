@@ -36,6 +36,13 @@ typedef struct fila//cria a TAD
     Voo *fim;
 }Fila;
 
+int VaziaFila (Fila* f)
+{
+    if (f->ini==NULL) return 1;
+    return 0;
+
+}
+
 Fila* CriaFila ()
 {
     Fila* f = (Fila*) malloc(sizeof(Fila));
@@ -48,8 +55,8 @@ Voo* ins_fim (Voo *fim, int p_aux, int c_aux, Horas h_aux, char *cod_aux)
     Voo *p = (Voo*)malloc(sizeof(Voo));
     p->passageiros = p_aux;
     p->checkHora = c_aux;
-    p->hora = h_aux.hora;
-    p->hora = h_aux.minuto;
+    p->hora.hora = h_aux.hora;
+    p->hora.minuto = h_aux.minuto;
     strcpy(p->codigoVoo, cod_aux);
     p->prox = NULL;
     if (fim != NULL) /* verifica se lista não estava vazia */
@@ -94,8 +101,8 @@ void imprimeFila (Fila* f)
     {
         printf("\npas: %d - ",q->passageiros);
         printf("\nchek: %d - ",q->checkHora);
-        printf("\ncod: %d - ",q->codigoVoo);
-        printf("\ntempo: %d:%d - ",q->hora, q->minuto);
+        printf("\ncod: %s - ",q->codigoVoo);
+        printf("\ntempo: %d:%d - ",q->hora.hora, q->hora.minuto);
     }
     printf("\n");
 }
@@ -111,6 +118,21 @@ Fila* liberaFila (Fila* f)
     }
     free(f);
     return NULL;
+}
+
+Horas HoraRandon (int s)
+{
+    Horas aux;
+    int h, minu;
+    for(int i = 0; i<s;i++){
+    h = rand()%24;
+    minu = rand()%60;
+    }
+
+    aux.hora = h;
+    aux.minuto = minu;
+
+    return aux;
 }
 
 #endif // CENTRAL_H_INCLUDED
