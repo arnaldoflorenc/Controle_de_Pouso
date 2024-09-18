@@ -15,23 +15,25 @@
 
 //void imprimeFila (Fila* f)IMPRIME A FILA
 
+typedef struct horas
+{
+    int hora;
+    int minuto;
+}Horas;
+
 typedef struct DadosVoo//dados do voo
 {
     int passageiros;
     int checkHora;
     char codigoVoo[4];
+    Horas hora;
+    struct DadosVoo *prox;
 }Voo;
-
-typedef struct no//struct que armazena os elementos da fila
-{
-    Voo info;
-    struct No *prox;
-}Nos;
 
 typedef struct fila//cria a TAD
 {
-    Nos *ini;
-    Nos *fim;
+    Voo *ini;
+    Voo *fim;
 }Fila;
 
 Fila* CriaFila ()
@@ -41,39 +43,43 @@ Fila* CriaFila ()
     return f;
 }
 
-Nos* ins_fim (Nos *fim, Voo A)
+Voo* ins_fim (Voo *fim, int p_aux, int c_aux, Horas h_aux, char *cod_aux)
 {
-    Nos *p = (Nos*)malloc(sizeof(Nos));
-    p->info = A;
+    Voo *p = (Voo*)malloc(sizeof(Voo));
+    p->passageiros = p_aux;
+    p->checkHora = c_aux;
+    p->hora = h_aux.hora;
+    p->hora = h_aux.minuto;
+    strcpy(p->codigoVoo, cod_aux);
     p->prox = NULL;
     if (fim != NULL) /* verifica se lista não estava vazia */
     fim->prox = p;
     return p;
 }
 
-void InsereFila (Fila* f, int v)
+void InsereFila (Fila* f, int pessoas, int atraso, Horas h, char *cod)
 {
-    f->fim = ins_fim(f->fim,v);
+    f->fim = ins_fim(f->fim, pessoas, atraso, h, cod);
     if (f->ini==NULL) /* fila antes vazia? */
     f->ini = f->fim;
 }
 
-Nos* retira_ini (Nos* ini)
+Voo* retira_ini (Voo* ini)
 {
-    Nos* p = ini->prox;
+    Voo* p = ini->prox;
     free(ini);
     return p;
 }
 
-int RetiraFila (Fila* f)
+Voo* RetiraFila (Fila* f)
 {
-    int v;
+    Voo *v;
     if (VaziaFila(f))
     {
         printf("Fila vazia.\n");
         exit(0); /* aborta programa */
     }
-    v = f->ini->info;
+    v = f->ini;
     f->ini = retira_ini(f->ini);
     if (f->ini == NULL) /* fila ficou vazia? */
     f->fim = NULL;
@@ -82,22 +88,24 @@ int RetiraFila (Fila* f)
 
 void imprimeFila (Fila* f)
 {
-    Nos* q;
+    Voo* q;
     printf("\n\t\t");
     for (q=f->ini; q!=NULL; q=q->prox)
     {
-        printf("%d - ",q->info);
+        printf("\npas: %d - ",q->passageiros);
+        printf("\nchek: %d - ",q->checkHora);
+        printf("\ncod: %d - ",q->codigoVoo);
+        printf("\ntempo: %d:%d - ",q->hora, q->minuto);
     }
     printf("\n");
 }
 
-
 Fila* liberaFila (Fila* f)
 {
-    Nos* q = f->ini;
+    Voo* q = f->ini;
     while (q!=NULL)
     {
-        Nos* t = q->prox;
+        Voo* t = q->prox;
         free(q);
         q = t;
     }
