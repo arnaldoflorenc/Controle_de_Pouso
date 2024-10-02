@@ -1,5 +1,6 @@
 #ifndef CENTRAL_H_INCLUDED
 #define CENTRAL_H_INCLUDED
+#define TAM 5
 
 //Funções para a manipulação de filas
 
@@ -26,7 +27,7 @@ typedef struct DadosVoo//dados do voo
     int passageiros;
     int checkHora;
     char codigoVoo[4];
-    Horas hora;
+    Horas horario;
     struct DadosVoo *prox;
 }Voo;
 
@@ -55,8 +56,8 @@ Voo* ins_fim (Voo *fim, int p_aux, int c_aux, Horas h_aux, char *cod_aux)
     Voo *p = (Voo*)malloc(sizeof(Voo));
     p->passageiros = p_aux;
     p->checkHora = c_aux;
-    p->hora.hora = h_aux.hora;
-    p->hora.minuto = h_aux.minuto;
+    p->horario.hora = h_aux.hora;
+    p->horario.minuto = h_aux.minuto;
     strcpy(p->codigoVoo, cod_aux);
     p->prox = NULL;
     if (fim != NULL) /* verifica se lista não estava vazia */
@@ -64,11 +65,32 @@ Voo* ins_fim (Voo *fim, int p_aux, int c_aux, Horas h_aux, char *cod_aux)
     return p;
 }
 
-void InsereFila (Fila* f, int pessoas, int atraso, Horas h, char *cod)
+int ChecaAtraso(Horas h){
+
+    time_t Atual;
+    time(&Atual);
+    struct tm *Local = localtime(&Atual);
+
+    if(h.minuto-20 != Local->tm_min){
+        return 0;
+    }
+    return 1;
+}
+
+void InsereFila (Fila* f, int pessoas, char *cod, Horas h, bool flg)
 {
-    f->fim = ins_fim(f->fim, pessoas, atraso, h, cod);
-    if (f->ini==NULL) /* fila antes vazia? */
-    f->ini = f->fim;
+    int atraso;
+    if(flg){
+        f->fim = ins_fim(f->fim, pessoas, -1, h, cod);
+        if (f->ini==NULL) /* fila antes vazia? */
+        f->ini = f->fim;
+    } else {
+        atraso = ChecaAtraso(h);
+
+        f->fim = ins_fim(f->fim, pessoas, atraso, h, cod);
+        if (f->ini==NULL) /* fila antes vazia? */
+        f->ini = f->fim;
+    }
 }
 
 Voo* retira_ini (Voo* ini)
@@ -96,13 +118,29 @@ Voo* RetiraFila (Fila* f)
 void imprimeFila (Fila* f)
 {
     Voo* q;
+    int i = 1;
     printf("\n\t\t");
     for (q=f->ini; q!=NULL; q=q->prox)
     {
-        printf("\npas: %d - ",q->passageiros);
-        printf("\nchek: %d - ",q->checkHora);
-        printf("\ncod: %s - ",q->codigoVoo);
-        printf("\ntempo: %d:%d - ",q->hora.hora, q->hora.minuto);
+        printf("\n\n\t------%d° Voo------", i);
+        printf("\n\tPassageiros: %d - ",q->passageiros);
+        printf("\n\tCódigo de Voo: %s - ",q->codigoVoo);
+        printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
+        i++;
+    }
+    printf("\n");
+}
+
+void imprimeFilaCheck (Fila* f)
+{
+    Voo* q;
+    printf("\n\t\t");
+    for (q=f->ini; q!=NULL; q=q->prox)
+    {
+        printf("\n\n\tPassageiros: %d - ",q->passageiros);
+        printf("\n\tCódigo de Voo: %s - ",q->codigoVoo);
+        printf("\n\tCheck-Hora: %d - ",q->checkHora);
+        printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
     }
     printf("\n");
 }
@@ -124,10 +162,11 @@ Horas HoraRandon (int s)
 {
     Horas aux;
     int h, minu;
-    for(int i = 0; i<s;i++){
-    h = rand()%24;
+
+
     minu = rand()%60;
-    }
+    h = rand()%24;
+
 
     aux.hora = h;
     aux.minuto = minu;
