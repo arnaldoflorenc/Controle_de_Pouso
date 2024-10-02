@@ -26,7 +26,7 @@ typedef struct DadosVoo//dados do voo
 {
     int passageiros;
     int checkHora;
-    char codigoVoo[4];
+    char codigoVoo[5];
     Horas horario;
     struct DadosVoo *prox;
 }Voo;
@@ -51,13 +51,13 @@ Fila* CriaFila ()
     return f;
 }
 
-Voo* ins_fim (Voo *fim, int p_aux, int c_aux, Horas h_aux, char *cod_aux)
+Voo* ins_fim (Voo *fim, int p_aux, int c_aux, Horas h, char *cod_aux)
 {
     Voo *p = (Voo*)malloc(sizeof(Voo));
     p->passageiros = p_aux;
     p->checkHora = c_aux;
-    p->horario.hora = h_aux.hora;
-    p->horario.minuto = h_aux.minuto;
+    p->horario.hora=h.hora;
+    p->horario.minuto= h.minuto;
     strcpy(p->codigoVoo, cod_aux);
     p->prox = NULL;
     if (fim != NULL) /* verifica se lista não estava vazia */
@@ -71,7 +71,7 @@ int ChecaAtraso(Horas h){
     time(&Atual);
     struct tm *Local = localtime(&Atual);
 
-    if(h.minuto-20 != Local->tm_min){
+    if(h.minuto-20 > Local->tm_min && h.hora >= Local-> tm_hour){
         return 0;
     }
     return 1;
@@ -125,7 +125,12 @@ void imprimeFila (Fila* f)
         printf("\n\n\t------%d° Voo------", i);
         printf("\n\tPassageiros: %d - ",q->passageiros);
         printf("\n\tCódigo de Voo: %s - ",q->codigoVoo);
-        printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
+        if(q->horario.minuto<10){
+            printf("\n\tHorário: %d:0%d - ",q->horario.hora, q->horario.minuto);
+        }
+        else{
+            printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
+        }
         i++;
     }
     printf("\n");
@@ -140,7 +145,12 @@ void imprimeFilaCheck (Fila* f)
         printf("\n\n\tPassageiros: %d - ",q->passageiros);
         printf("\n\tCódigo de Voo: %s - ",q->codigoVoo);
         printf("\n\tCheck-Hora: %d - ",q->checkHora);
-        printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
+        if(q->horario.minuto<10){
+         printf("\n\tHorário: %d:0%d - ",q->horario.hora, q->horario.minuto);
+        }
+
+       else{ printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
+       }
     }
     printf("\n");
 }
@@ -158,18 +168,12 @@ Fila* liberaFila (Fila* f)
     return NULL;
 }
 
-Horas HoraRandon (int s)
+Horas HoraRandon ()
 {
     Horas aux;
-    int h, minu;
 
-
-    minu = rand()%60;
-    h = rand()%24;
-
-
-    aux.hora = h;
-    aux.minuto = minu;
+    aux.hora = rand()%24;
+    aux.minuto = rand()%60;
 
     return aux;
 }
