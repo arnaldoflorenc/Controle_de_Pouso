@@ -27,7 +27,17 @@ char* CodigoRandon(){
     return cod;
 }
 
-void cadastraVoo(Fila *C, Fila *E, int s){
+int passageirosRandon(){
+    int pas;
+
+    do{
+        pas = rand()%201;
+    }while(pas <= 50);
+
+    return pas;
+}
+
+void cadastraVoo(Fila *C, Fila *E){
 
     int passageiros;
     bool flag;
@@ -35,22 +45,29 @@ void cadastraVoo(Fila *C, Fila *E, int s){
     char resp, emerg;
 
     do{
-    printf("\n\t\t----Dados do Voo----");
-    printf("\n\t->QTD passageiros: ");
-    scanf("%d", &passageiros);
+    printf("\n\t\t----Cadastro de Voo---");
+    passageiros = passageirosRandon();
+    codigo = CodigoRandon();
+    Horas chegada = HoraRandon();
 
-    printf("\n\t->Emergencia? (S/N)");
+    printf("\n\t->Número de Passageiros: %d", passageiros);
+    printf("\n\t->Código de Voo: %s", codigo);
+    if(chegada.minuto<10){
+    printf("\n\t->Horário de Chegada: %d:0%d", chegada.hora, chegada.minuto);
+    }
+    else{
+    printf("\n\t->Horário de Chegada: %d:%d", chegada.hora, chegada.minuto);
+    }
+    printf("\n\n\t->Emergencia? (S/N)");
     fflush(stdin);
     emerg=getchar();
 
-    codigo = CodigoRandon();
-
     if(toupper(emerg) == 'N'){
     flag = false;
-    InsereFila(C, passageiros, codigo, HoraRandon(s), flag);
+    InsereFila(C, passageiros, codigo, chegada, flag);
     } else {
     flag = true;
-    InsereFila(E, passageiros, codigo, HoraRandon(s), flag);
+    InsereFila(E, passageiros, codigo, chegada, flag);
     }
 
     printf("\n\t-> Deseja inserir mais um voo? (S/N)");
@@ -79,43 +96,56 @@ void proxPouso(Fila *C, Fila *E){
         printf("\n\n\t->Passageiros: %d - ",q->passageiros);
         printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
         printf("\n\t->Check-Hora: %d - ",q->checkHora);
+        if(q->horario.minuto<10){
+        printf("\n\t->Horário: %d:0%d - ",q->horario.hora, q->horario.minuto);
+        }
+        else{
         printf("\n\t->Horário: %d:%d - ",q->horario.hora, q->horario.minuto);
-
+        }
     } else {
         q=C->ini;
         printf("\n\tProximo para o Pouso");
         printf("\n\n\t->Passageiros: %d - ",q->passageiros);
         printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
         printf("\n\t->Check-Hora: %d - ",q->checkHora);
+        if(q->horario.minuto<10){
+        printf("\n\t->Horário: %d:0%d - ",q->horario.hora, q->horario.minuto);
+        }
+        else{
         printf("\n\t->Horário: %d:%d - ",q->horario.hora, q->horario.minuto);
+        }
     }
 }
 
 void autorizarPouso(Fila *C, Fila *E, Fila *P){
     Voo* q;
-    if(!VaziaFila(E)){
-        q=E->ini;
-        printf("\n\tPrioridade é da Fila Emergencial");
-        printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
-        printf("\n\t->Check-Hora: %d - ",q->checkHora);
-        printf("\n\t->Voo autorizado para pouso");
+    if (VaziaFila(E) && VaziaFila(C)){
+        printf("\n\tNão a Voos para pousar\n\n");
+    } else {
+        if(!VaziaFila(E)){
+            q=E->ini;
+            printf("\n\tPrioridade é da Fila Emergencial");
+            printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
+            printf("\n\t->Check-Hora: %d - ",q->checkHora);
+            printf("\n\t->Voo autorizado para pouso");
 
-        InsereFila(P, q->passageiros, q->codigoVoo, q->horario, true);
-        RetiraFila(E);
+            InsereFila(P, q->passageiros, q->codigoVoo, q->horario, true);
+            RetiraFila(E);
 
-    }else {
-        q=C->ini;
-        printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
-        printf("\n\t->Check-Hora: %d - ",q->checkHora);
-
-        if(q->checkHora == 0){
-            printf("\n\t->Voo Atrasado");
         }else {
-            printf("\n\t->Voo no Horário");
+            q=C->ini;
+            printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
+            printf("\n\t->Check-Hora: %d - ",q->checkHora);
+
+            if(q->checkHora == 0){
+                printf("\n\t->Voo Atrasado");
+            }else {
+                printf("\n\t->Voo no Horário");
+            }
+            printf("\n\t->Voo autorizado para pouso");
+            InsereFila(P, q->passageiros, q->codigoVoo, q->horario, false);
+            RetiraFila(C);
         }
-        printf("\n\t->Voo autorizado para pouso");
-        InsereFila(P, q->passageiros, q->codigoVoo, q->horario, false);
-        RetiraFila(C);
     }
 }
 
@@ -129,13 +159,16 @@ void imprimePousos(Fila *P){
 }
 
 int main(){
-    int seed = 2104;
+    int seed = 0;
     int op;
     Fila *Chegadas = CriaFila();
     Fila *Emergencia = CriaFila();
     Fila *Pousados = CriaFila();
 
     setlocale(LC_ALL,"portuguese");
+
+    printf("\n\tInsira sua seed: ");
+    scanf("%d", &seed);
 
     srand(seed);
 
@@ -148,12 +181,16 @@ int main(){
     printf("\n\t[5]. Fila de Voos");
     printf("\n\t[6]. Simulação de Pouso");
     printf("\n\t[7]. Sair ");
+
+    do{
+    fflush(stdin);
     printf("\n\t\t ->Opção desejada:");
     scanf("%d",&op);
+    }while(op < 0  || op > 7);
 
     switch(op){
         case 1:
-            cadastraVoo(Chegadas, Emergencia, seed);
+            cadastraVoo(Chegadas, Emergencia);
             break;
         case 2:
             autorizarPouso(Chegadas, Emergencia, Pousados);
