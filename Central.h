@@ -71,9 +71,17 @@ int ChecaAtraso(Horas h){
     time(&Atual);
     struct tm *Local = localtime(&Atual);
 
-    if(h.minuto-20 > Local->tm_min && h.hora >= Local-> tm_hour){
+    if (h.hora < Local->tm_hour) {
+        return 0;
+    } else if (h.hora == Local->tm_hour) {
+
+        if (h.minuto - 20 > Local->tm_min) {
+            return 0;
+        }
+    } else if (h.hora > Local->tm_hour) {
         return 0;
     }
+
     return 1;
 }
 
