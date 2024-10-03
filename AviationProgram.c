@@ -153,21 +153,68 @@ void imprimePousos(Fila *P){
     if(VaziaFila(P)){
         printf("\n\tNão há Voos em Solo");
     } else {
-        printf("\n\tVoos Pousados!!");
+        printf("\n\tVoos Pousados!!\n");
         imprimeFilaCheck(P);
     }
 }
 
+void simulacaodeVoo(Fila *C, Fila *E, int n){
+    Voo *q;
+    int qtd = 0;
+    if(n > 10){
+    while(n > 9){
+        n -= 10;
+        qtd++;
+    }
+
+    printf("\n\tNesse intervalo de tempo serão pousados %d voos.", qtd);
+    printf("\n\tSão eles:");
+
+
+    for(int i = 0; i < qtd; i++){
+
+
+
+        if (!VaziaFila(E)){
+            q = E->ini;
+            printf("\n\t ------%d° Voo------", i+1);
+            printf("\n\n\tPrioridade é da Fila Emergencial");
+            printf("\n\n\t->Código de Voo: %s", q->codigoVoo);
+            printf("\n\n\t->Voo de emergência.");
+            printf("\n\n\t->Número de passageiros: %d \n\n", q->passageiros);
+            E->ini = q->prox;
+        }
+
+        else if (!VaziaFila(C)){
+            q = C->ini;
+            printf("\n\t ------%d° Voo------", i+1);
+            printf("\n\n\t->Código de Voo: %s", q->codigoVoo);
+            printf("\n\n\t->Voo não de emergência.");
+            printf("\n\n\t->Número de passageiros: %d\n\n", q->passageiros);
+            C->ini = q->prox;
+        }
+        else if(VaziaFila(E) && VaziaFila(C)){
+            printf("\n\tNão existem tantos voos para esse intervalo de simulação.\n\n");
+            return;
+        }
+
+    }
+    }
+    else{
+        printf("\n\n\tIntervalo muito pequeno!\n\n");
+    }
+}
 int main(){
     int seed = 0;
     int op;
+    int n = 0;
     Fila *Chegadas = CriaFila();
     Fila *Emergencia = CriaFila();
     Fila *Pousados = CriaFila();
 
     setlocale(LC_ALL,"portuguese");
 
-    printf("\n\tInsira sua seed: ");
+    printf("\n\tInsira a seed desejada: ");
     scanf("%d", &seed);
 
     srand(seed);
@@ -178,7 +225,7 @@ int main(){
     printf("\n\t[2]. Autorizar ");
     printf("\n\t[3]. Relatório");
     printf("\n\t[4]. Proximo pouso ");
-    printf("\n\t[5]. Fila de Voos");
+    printf("\n\t[5]. Fila de Voos pousados");
     printf("\n\t[6]. Simulação de Pouso");
     printf("\n\t[7]. Sair ");
 
@@ -205,6 +252,9 @@ int main(){
             imprimePousos(Pousados);
             break;
         case 6:
+            printf("\n\tQuantos minutos você gostaria de simular? ");
+            scanf("%d", &n);
+            simulacaodeVoo(Chegadas, Emergencia, n);
             break;
         case 7:
             break;
