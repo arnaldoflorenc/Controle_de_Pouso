@@ -74,7 +74,6 @@ int ChecaAtraso(Horas h){
     if (h.hora < Local->tm_hour) {
         return 0;
     } else if (h.hora == Local->tm_hour) {
-
         if (h.minuto - 20 > Local->tm_min) {
             return 0;
         }
@@ -135,8 +134,7 @@ void imprimeFila (Fila* f)
         printf("\n\tCódigo de Voo: %s - ",q->codigoVoo);
         if(q->horario.minuto<10){
             printf("\n\tHorário: %d:0%d - ",q->horario.hora, q->horario.minuto);
-        }
-        else{
+        } else{
             printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
         }
         i++;
@@ -154,10 +152,9 @@ void imprimeFilaCheck (Fila* f)
         printf("\n\tCódigo de Voo: %s - ",q->codigoVoo);
         printf("\n\tCheck-Hora: %d - ",q->checkHora);
         if(q->horario.minuto<10){
-         printf("\n\tHorário: %d:0%d - ",q->horario.hora, q->horario.minuto);
-        }
-
-       else{ printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
+            printf("\n\tHorário: %d:0%d - ",q->horario.hora, q->horario.minuto);
+        } else{
+            printf("\n\tHorário: %d:%d - ",q->horario.hora, q->horario.minuto);
        }
     }
     printf("\n");
