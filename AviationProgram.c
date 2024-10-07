@@ -80,12 +80,20 @@ void cadastraVoo(Fila *C, Fila *E){
 }
 
 void relatorio(Fila *C, Fila *E){
-    printf("\n\tFila de Voos Emergenciais!!");
-    imprimeFila(E);
+    if(VaziaFila(C)&&VaziaFila(E)){
+        printf("\n\tNão existem voos para pouso!");
+    } else{
+        if(VaziaFila(E)){
+            printf("\n\tFila de Voos!!");
+            imprimeFila(C);
+        } else {
+            printf("\n\tFila de Voos Emergenciais!!");
+            imprimeFila(E);
 
-    printf("\n\tFila de Voos!!");
-    imprimeFila(C);
-
+            printf("\n\tFila de Voos!!");
+            imprimeFila(C);
+        }
+    }
 }
 
 void proxPouso(Fila *C, Fila *E){
@@ -121,7 +129,7 @@ void autorizarPouso(Fila *C, Fila *E, Fila *P){
     Voo* q;
     if (VaziaFila(E) && VaziaFila(C)){
         printf("\n\tNão a Voos para pousar\n\n");
-    } else {
+    } else{
         if(!VaziaFila(E)){
             q=E->ini;
             printf("\n\tPrioridade é da Fila Emergencial");
@@ -132,7 +140,7 @@ void autorizarPouso(Fila *C, Fila *E, Fila *P){
             InsereFila(P, q->passageiros, q->codigoVoo, q->horario, true);
             RetiraFila(E);
 
-        }else {
+        } else{
             q=C->ini;
             printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
             printf("\n\t->Check-Hora: %d - ",q->checkHora);
@@ -162,45 +170,38 @@ void simulacaodeVoo(Fila *C, Fila *E, int n){
     Voo *q;
     int qtd = 0;
     if(n > 10){
-    while(n > 9){
-        n -= 10;
-        qtd++;
-    }
-
-    printf("\n\tNesse intervalo de tempo serão pousados %d voos.", qtd);
-    printf("\n\tSão eles:");
-
-
-    for(int i = 0; i < qtd; i++){
-
-
-
-        if (!VaziaFila(E)){
-            q = E->ini;
-            printf("\n\t ------%d° Voo------", i+1);
-            printf("\n\n\tPrioridade é da Fila Emergencial");
-            printf("\n\n\t->Código de Voo: %s", q->codigoVoo);
-            printf("\n\n\t->Voo de emergência.");
-            printf("\n\n\t->Número de passageiros: %d \n\n", q->passageiros);
-            E->ini = q->prox;
+        while(n > 9){
+            n -= 10;
+            qtd++;
         }
 
-        else if (!VaziaFila(C)){
-            q = C->ini;
-            printf("\n\t ------%d° Voo------", i+1);
-            printf("\n\n\t->Código de Voo: %s", q->codigoVoo);
-            printf("\n\n\t->Voo não de emergência.");
-            printf("\n\n\t->Número de passageiros: %d\n\n", q->passageiros);
-            C->ini = q->prox;
-        }
-        else if(VaziaFila(E) && VaziaFila(C)){
-            printf("\n\tNão existem tantos voos para esse intervalo de simulação.\n\n");
-            return;
-        }
+        printf("\n\tNesse intervalo de tempo serão pousados %d voos.", qtd);
+        printf("\n\tSão eles:");
 
-    }
-    }
-    else{
+        for(int i = 0; i < qtd; i++){
+            if (!VaziaFila(E)){
+                q = E->ini;
+                printf("\n\t ------%d° Voo------", i+1);
+                printf("\n\n\tPrioridade é da Fila Emergencial");
+                printf("\n\n\t->Código de Voo: %s", q->codigoVoo);
+                printf("\n\n\t->Voo de emergência.");
+                printf("\n\n\t->Número de passageiros: %d \n\n", q->passageiros);
+                E->ini = q->prox;
+            } else if (!VaziaFila(C)){
+                q = C->ini;
+                printf("\n\t ------%d° Voo------", i+1);
+                printf("\n\n\t->Código de Voo: %s", q->codigoVoo);
+                printf("\n\n\t->Voo não de emergência.");
+                printf("\n\n\t->Número de passageiros: %d\n\n", q->passageiros);
+                C->ini = q->prox;
+
+            } else if(VaziaFila(E) && VaziaFila(C)){
+                printf("\n\tNão existem tantos voos para esse intervalo de simulação.\n\n");
+                return;
+            }
+
+        }
+    } else{
         printf("\n\n\tIntervalo muito pequeno!\n\n");
     }
 }
