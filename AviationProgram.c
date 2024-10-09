@@ -45,7 +45,8 @@ void cadastraVoo(Fila *C, Fila *E){
     char resp, emerg;
 
     do{
-    printf("\n\t\t----Cadastro de Voo---");
+    printf("\n\n----------------------------------------------------\n");
+    printf("\n\t\t>>>>>Cadastro de Voo<<<<<");
     passageiros = passageirosRandon();
     codigo = CodigoRandon();
     Horas chegada = HoraRandon();
@@ -81,7 +82,7 @@ void cadastraVoo(Fila *C, Fila *E){
 
 void relatorio(Fila *C, Fila *E){
     if(VaziaFila(C)&&VaziaFila(E)){
-        printf("\n\tNão existem voos para pouso!");
+        printf("\n\t~~~~~~Não existem voos para pouso~~~~~~");
     } else{
         if(VaziaFila(E)){
             printf("\n\tFila de Voos!!");
@@ -98,6 +99,10 @@ void relatorio(Fila *C, Fila *E){
 
 void proxPouso(Fila *C, Fila *E){
     Voo* q;
+    if(VaziaFila(E) && VaziaFila(C)){
+        printf("\n\n\t~~~~~~Não existe voo em espera~~~~~~");
+        return;
+    }
     if(!VaziaFila(E)){
         q=E->ini;
         printf("\n\tPrioridade é da Fila Emergencial");
@@ -128,11 +133,11 @@ void proxPouso(Fila *C, Fila *E){
 void autorizarPouso(Fila *C, Fila *E, Fila *P){
     Voo* q;
     if (VaziaFila(E) && VaziaFila(C)){
-        printf("\n\tNão a Voos para pousar\n\n");
+        printf("\t~~~~~ Não a Voos para pousar ~~~~~\n\n");
     } else{
         if(!VaziaFila(E)){
             q=E->ini;
-            printf("\n\tPrioridade é da Fila Emergencial");
+            printf("\n\tPrioridade é da Fila Emergencial\n");
             printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
             printf("\n\t->Check-Hora: %d - ",q->checkHora);
             printf("\n\t->Voo autorizado para pouso");
@@ -143,7 +148,6 @@ void autorizarPouso(Fila *C, Fila *E, Fila *P){
         } else{
             q=C->ini;
             printf("\n\t->Código de Voo: %s - ",q->codigoVoo);
-            printf("\n\t->Check-Hora: %d - ",q->checkHora);
 
             if(q->checkHora == 0){
                 printf("\n\t->Voo Atrasado");
@@ -159,7 +163,7 @@ void autorizarPouso(Fila *C, Fila *E, Fila *P){
 
 void imprimePousos(Fila *P){
     if(VaziaFila(P)){
-        printf("\n\tNão há Voos em Solo");
+        printf("\n\t~~~~~~Não há Voos em Solo~~~~~~");
     } else {
         printf("\n\tVoos Pousados!!\n");
         imprimeFilaCheck(P);
@@ -175,13 +179,13 @@ void simulacaodeVoo(Fila *C, Fila *E, int n){
             qtd++;
         }
 
-        printf("\n\tNesse intervalo de tempo serão pousados %d voos.", qtd);
-        printf("\n\tSão eles:");
+        printf("\n\tNesse intervalo de tempo poderão pousar no máximo %d voos.", qtd);
+        printf("\n\n\tSão eles:");
 
         for(int i = 0; i < qtd; i++){
             if (!VaziaFila(E)){
                 q = E->ini;
-                printf("\n\t ------%d° Voo------", i+1);
+                printf("\n\n\t >>>>>%d° Voo<<<<<", i+1);
                 printf("\n\n\tPrioridade é da Fila Emergencial");
                 printf("\n\n\t->Código de Voo: %s", q->codigoVoo);
                 printf("\n\n\t->Voo de emergência.");
@@ -189,14 +193,18 @@ void simulacaodeVoo(Fila *C, Fila *E, int n){
                 E->ini = q->prox;
             } else if (!VaziaFila(C)){
                 q = C->ini;
-                printf("\n\t ------%d° Voo------", i+1);
+                printf("\n\n\t >>>>>%d° Voo<<<<<", i+1);
                 printf("\n\n\t->Código de Voo: %s", q->codigoVoo);
-                printf("\n\n\t->Voo não de emergência.");
+                if(q->checkHora == 0){
+                printf("\n\n\t->Voo Atrasado");
+                }else {
+                printf("\n\n\t->Voo no Horário");
+                }
                 printf("\n\n\t->Número de passageiros: %d\n\n", q->passageiros);
                 C->ini = q->prox;
 
             } else if(VaziaFila(E) && VaziaFila(C)){
-                printf("\n\tNão existem tantos voos para esse intervalo de simulação.\n\n");
+                printf("\n\n\t~~~~Não existem tantos voos para esse intervalo de simulação.~~~~\n\n");
                 return;
             }
 
@@ -221,7 +229,8 @@ int main(){
     srand(seed);
 
     do{
-    printf("\n\t\t----Menu----");
+    printf("\n\n----------------------------------------------------\n");
+    printf("\n\t\t>>>>>Menu<<<<<");
     printf("\n\t[1]. Inserir ");
     printf("\n\t[2]. Autorizar ");
     printf("\n\t[3]. Relatório");
@@ -266,5 +275,3 @@ int main(){
     }while(op != 7);
 return 0;
 }
-
-
